@@ -12,8 +12,8 @@ class BiLSTM(nn.Module):
         hidden_layer_size: int,
         input_size: int,
         output_size: int,
-        num_layers: int = 1,
-        dropout_rate: float = 0.3,
+        num_layers: int,
+        dropout_rate: float,
     ) -> None:
         
         super().__init__()

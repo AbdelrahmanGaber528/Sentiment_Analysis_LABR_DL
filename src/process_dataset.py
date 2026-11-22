@@ -4,12 +4,12 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 
-nltk.download(info_or_id="stopwords", quiet=True)
+nltk.download("stopwords", quiet=True)
 
 ARABIC_STOPWORDS: set[str] = set[str](stopwords.words("arabic"))
 
 
-# Constant Patterns
+# Patterns
 URL_PATTERN: Pattern[str] = re.compile(r"https?://\S+|www\.\S+")
 IP_PATTERN: Pattern[str] = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
 EMOJI_PATTERN: Pattern[str] = re.compile(r"[\U0001F600-\U0001F64F\U0001F300-\U0001F5FF\U0001F680-\U0001F6FF\U0001F1E0-\U0001F1FF\U0001F900-\U0001F9FF\U0001FA70-\U0001FAFF\u2600-\u26FF\u2700-\u27BF\u200D\uFE0F]")
@@ -18,6 +18,7 @@ SYMBOL_PATTERN: Pattern[str] = re.compile(r"[\u00A2-\u00BF\u20A0-\u20CF\u2190-\u
 
 
 TOKENIZER : RegexpTokenizer = RegexpTokenizer(pattern=r"\S+")
+
 
 def process_comment(comment: str) -> list[str]:
 
