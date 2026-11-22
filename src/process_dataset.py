@@ -53,7 +53,7 @@ def build_vocab(tokenized_reviews : list[list[str]])-> dict[str , int]:
 
 
 # following methods for one rewview comment : list[str] tokens(words) , list[int] -> ids for one list
- 
+
 def tokens_to_ids(tokens : list[str], vocab : dict[str , int])-> list[int]: 
     return [vocab.get(token , vocab["UNK"]) for token in tokens]
 
