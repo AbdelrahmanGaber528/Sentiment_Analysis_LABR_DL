@@ -2,11 +2,10 @@ import numpy as np
 import pytest
 import torch
 from torch.utils.data import DataLoader
-# In tests/test_pipeline.py
+
 from src.process_dataset import process_comment
 from src.dataset import BookDataset
 from src.model import BiLSTM
-
 
 
 # ==========================================
@@ -56,7 +55,8 @@ def test_process_comment_empty_or_only_noise() -> None:
 
 @pytest.fixture
 def sample_vocab() -> dict[str, int]:
-    return {"<PAD>": 0, "<UNK>": 1, "كتاب": 2, "ممتاز": 3, "سيء": 4}
+    # Changed from "<PAD>" / "<UNK>" to "PAD" / "UNK" to match src/process_dataset.py
+    return {"PAD": 0, "UNK": 1, "كتاب": 2, "ممتاز": 3, "سيء": 4}
 
 
 def test_book_dataset_length_and_item_types(sample_vocab: dict[str, int]) -> None:
@@ -104,7 +104,7 @@ def test_book_dataset_unknown_token_mapping(sample_vocab: dict[str, int]) -> Non
     ds = BookDataset(tokens=tokens, labels=labels, vocab=sample_vocab, max_length=3)
 
     x, _ = ds[0]
-    # "كتاب" -> 2, "كلمة_مجهولة" -> 1 (<UNK>), padding -> 0
+    # "كتاب" -> 2, "كلمة_مجهولة" -> 1 (UNK), padding -> 0
     assert x.tolist() == [2, 1, 0]
 
 
@@ -132,11 +132,14 @@ def test_bilstm_forward_output_shape() -> None:
     batch_size = 4
     seq_len = 10
 
+    # Explicitly passed num_layers and dropout_rate
     model = BiLSTM(
         vocab_size=vocab_size,
         hidden_layer_size=hidden_size,
         input_size=embed_dim,
         output_size=num_classes,
+        num_layers=1,
+        dropout_rate=0.3,
     )
 
     dummy_input = torch.randint(1, vocab_size, (batch_size, seq_len))
@@ -147,12 +150,28 @@ def test_bilstm_forward_output_shape() -> None:
 
 
 def test_bilstm_padding_idx_stays_zero() -> None:
-    model = BiLSTM(vocab_size=50, hidden_layer_size=16, input_size=8, output_size=2)
+    # Explicitly passed num_layers and dropout_rate
+    model = BiLSTM(
+        vocab_size=50,
+        hidden_layer_size=16,
+        input_size=8,
+        output_size=2,
+        num_layers=1,
+        dropout_rate=0.3,
+    )
     assert torch.all(model.embedding.weight[0] == 0)
 
 
 def test_bilstm_backward_pass_updates_gradients() -> None:
-    model = BiLSTM(vocab_size=50, hidden_layer_size=16, input_size=8, output_size=2)
+    # Explicitly passed num_layers and dropout_rate
+    model = BiLSTM(
+        vocab_size=50,
+        hidden_layer_size=16,
+        input_size=8,
+        output_size=2,
+        num_layers=1,
+        dropout_rate=0.3,
+    )
     criterion = torch.nn.CrossEntropyLoss()
 
     x = torch.randint(1, 50, (4, 6))
